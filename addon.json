@@ -1,0 +1,11 @@
+{
+	"title":"Your own anime army",
+	"type":"npc",
+	"tags":[ "fun", "cartoon" ],
+	"ignore":
+	[
+		"*.psd",
+		"*.vcproj",
+		"*.svn*"
+	]
+}

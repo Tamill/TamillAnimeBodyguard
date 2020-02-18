@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/Maximo/rezero/rem/horn"
+    "$halflambert"                 "1"
+    "$selfillum" 					"1"	
+}

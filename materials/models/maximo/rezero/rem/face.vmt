@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/Maximo/rezero/rem/face"
+	"$bumpmap" "models/Maximo/rezero/rem/normal"
+
+	"$lightwarptexture" "models/Maximo/rezero/rem/lightwarp"
+
+	"$phong" "1"
+	"$phongboost"	".5"
+	"$phongexponent" "2"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+
+}

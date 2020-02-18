@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/Maximo/rezero/rem/eyestock"
+	"$bumpmap" "models/Maximo/rezero/rem/normal"
+
+	"$lightwarptexture" "models/Maximo/rezero/rem/lightwarp"
+
+	"$halflambert"			"1"
+
+}

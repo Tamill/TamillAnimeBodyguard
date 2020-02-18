@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/luckystar/konata/sock"
+	"$nocull" 1
+}

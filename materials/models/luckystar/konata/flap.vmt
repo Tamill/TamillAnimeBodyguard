@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/luckystar/konata/flap"
+	"$nocull" 1
+}
