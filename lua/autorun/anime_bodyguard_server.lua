@@ -74,110 +74,93 @@ function ModelMenu(bits)
 	local name = net.ReadString(7)
 	local chname = net.ReadString(8)
 	local sourceWork = net.ReadString(9)
-	
+	local posOfPor = "materials/entities/"..assetName..".png"
+	local UIposOffset = ScrH()*0.25
 
-	
 	local frame = vgui.Create("DFrame")
-	frame:SetTitle( "Model Subscription Menu 模型订阅界面.           "..sourceWork )
-	frame:SetSize(ScrW()*0.2,ScrH()*0.8 )
-	frame:Center()
+	frame:SetTitle( "Model Subscription Menu 模型订阅   "..name.."  "..chname )
 	frame:MakePopup()
 	
-	
-	
-	local theText = "materials/entities/"..assetName..".png"
 	local Text = vgui.Create( "DLabel", frame )
-	Text:SetText( [[
-	z(〃'▽'〃) Let's subscribe model ]]..name..[[. 
-	Maybe you're wondering why I didn't make all the models 
-	into this addon. 
-	1.Models are uploaded by many people, I don't need to do that again.
-	2.It's very difficult to put so many model files into one package.
-    3.The models are not made by me.	
-	
-	z(〃'▽'〃) 正在订阅模型]]..chname..[[
-	]] )
-	text1posOffset = 30
-	Text:SizeToContents()
 	Text:SetContentAlignment( 5 )
 	Text:SetTextColor( color_white )
-	Text:SetPos( 10, text1posOffset)	
+	Text:SetText( [[z(〃'▽'〃) Let's subscribe model ]]..name.."  "..chname..[[. 
+Tip: All the models you subscribed from here will be 
+attached with new VJBase Scripts. Not simple NPCs.
+
+Maybe you're wondering why I didn't make all the models 
+into this addon. 
+
+1.Models are uploaded by many people, I don't need to do that again.
+2.It's very difficult to put so many model files into one package.
+3.The models are not made by me.
+
+You can also try to browse the collection:
+]] )	
 	
-	
-	local aur = vgui.Create("DImage", frame)
-	aur:SetSize(128, 128)
-	aur:SetImage("materials/entities/Tamill.png")
-	
-	local button = vgui.Create("DButton", frame)
-	button:SizeToContents()
-	button:SetTall( 20 )
-	button:SetSize(300, 90)
-	
-	button:SetText([[
-	Open the list of all models.
-	帮我打开全部模型的订阅页面。
+	local ui_scri = vgui.Create("DImage", frame)
+	ui_scri:SetImage("materials/entities/ui_scri.png")
+
+	local bt_opall = vgui.Create("DButton", frame)
+	bt_opall:SizeToContents()
+	bt_opall:SetTall( 20 )
+	bt_opall:SetText([[
+	Browse Anime Character Collection
+	浏览二次元模型集合
 	]])
-	function button:DoClick()
+	function bt_opall:DoClick()
 		gui.OpenURL("https://steamcommunity.com/workshop/filedetails/?id=1462658424" )
 	end
-	local Text = vgui.Create( "DLabel", frame )
-	Text:SetText( [[
-	Please click here to use your steam to open the page.
-	请点击这里使用你的steam来打开这个页面。
-	]] )
-	Text:SizeToContents()
-	Text:SetContentAlignment( 5 )
-	Text:SetTextColor( color_white )
-	aur:SetPos( 20, text1posOffset+110 )
-	button:SetPos( 10, text1posOffset+250 )
-	Text:SetPos( 20, text1posOffset+300 )
-	local Text = vgui.Create( "DLabel", frame )
-	Text:SetText( [[
-	Please click here to use your steam to open the page.
-	请点击这里使用你的steam来打开这个页面。
-	]] )
-	Text:SizeToContents()
-	Text:SetContentAlignment( 5 )
-	Text:SetTextColor( color_white )
-	Text:SetPos( 20, text1posOffset+550 )
-	
 
-	
-			local button3 = vgui.Create("DButton", frame)
-	button3:SizeToContents()
-	button3:SetTall( 20 )
-	button3:SetPos( 10, text1posOffset+600 )
-	button3:SetSize(200, 90)
-	button3:SetText([[
+	local bt_rebug = vgui.Create("DButton", frame)
+	bt_rebug:SizeToContents()
+	bt_rebug:SetTall( 20 )
+	bt_rebug:SetText([[
 	Report Bugs.
 	对我留言汇报问题
 	]])
-	function button3:DoClick()
+	function bt_rebug:DoClick()
 		gui.OpenURL("http://steamcommunity.com/sharedfiles/filedetails/?id=1156321204" )
 	end
 	
-	local aur2 = vgui.Create("DImage", frame)
-	aur2:SetSize(128, 128)
-	aur2:SetImage(theText)
-	aur2:SetPos( 20, text1posOffset+350 )
+	local img_por = vgui.Create("DImage", frame)
+	img_por:SetImage(posOfPor)
 	
-	local button2 = vgui.Create("DButton", frame)
-	button2:SizeToContents()
-	button2:SetTall( 20 )
-	button2:SetSize(300, 90)
-	button2:SetPos( 10, text1posOffset+500 )
-	button2:SetText([[
+	local bt_opws = vgui.Create("DButton", frame)
+	bt_opws:SizeToContents()
+	bt_opws:SetTall( 20 )
+	bt_opws:SetText([[
 	Open the ]]..name..[[ model workshop page.
 	帮我打开]]..chname..[[模型创意工坊页面。
 	]])
-	function button2:DoClick()
+	function bt_opws:DoClick()
 		gui.OpenURL(steamid)
 	end
-	
-	
 	timer.Simple(1, function() 
 		gui.OpenURL(steamid)
 	end)
+	
+	--UI Size--------
+	frame:SetSize(ScrW()*0.5,ScrH()*0.6 )
+	Text:SizeToContents()
+	ui_scri:SetSize(ScrW()*0.5, UIposOffset)
+	img_por:SetSize(128*1.5, 128*1.5)
+	bt_opall:SetSize(300, 50)
+	bt_opws:SetSize(300, 58)
+	bt_rebug:SetSize(200, 50)
+	
+	--UI Position--------
+	frame:Center()
+	ui_scri:SetPos( 0, 30 )
+	
+	Text:SetPos(10, UIposOffset+40)
+	bt_opall:SetPos( 10, UIposOffset+200 )
+	bt_rebug:SetPos( 10, UIposOffset+260 )
+	img_por:SetPos( 380, UIposOffset+50 )
+	bt_opws:SetPos( 580, UIposOffset+50 )
+		
+	
+	
 end
 net.Receive("ABT_ModelMenu", ModelMenu)
 

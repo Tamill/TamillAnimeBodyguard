@@ -15,7 +15,8 @@ ENT.HasFootStepSound = false
 ENT.HasSounds = false
 ENT.FadeCorpseTime = 30 -- How much time until the ragdoll fades | Unit = Seconds
 ENT.MoveOutOfFriendlyPlayersWay = true
-ENT.DisableWeaponReloadAnimation = true
+ENT.DisableWeaponReloadAnimation = false
+ENT.Weapon_UnlimitedAmmo = true
 ENT.DisableMeleeAttackAnimation = true -- if true, it will disable the animation code
 ENT.BloodColor = "Red" -- The blood type, this will determine what it should use (decal, particle, etc.)
 ENT.BecomeEnemyToPlayer = false -- Should the friendly SNPC become enemy towards the player if it's damaged by a player? -- Should the SNPC have a melee attack?
@@ -28,14 +29,14 @@ ENT.FindEnemy_UseSphere = true -- Should the SNPC be able to see all around him?
 ENT.FindEnemy_CanSeeThroughWalls = true 
 ENT.DisableChasingEnemy = true
 ENT.IsMedicSNPC = true -- Is this SNPC a medic? Does it heal other friendly friendly SNPCs, and players(If friendly)
-ENT.GodMode = true
+--ENT.GodMode = false
 ENT.Immune_AcidPoisonRadiation = true -- Immune to Acid, Poison and Radiation
-ENT.Immune_Bullet = false -- Immune to bullet type damages
-ENT.Immune_Blast = true -- Immune to explosive-type damages
+--ENT.Immune_Bullet = false -- Immune to bullet type damages
+--ENT.Immune_Blast = true -- Immune to explosive-type damages
 ENT.Immune_Dissolve = true -- Immune to dissolving | Example: Combine Ball
 ENT.Immune_Electricity = true -- Immune to electrical-type damages | Example: shock or laser
 ENT.Immune_Fire = true -- Immune to fire-type damages
-ENT.Immune_Physics = true -- Immune to physics impacts, won't take damage from props
+--ENT.Immune_Physics = true -- Immune to physics impacts, won't take damage from props
 ENT.Immune_Sonic = true -- Immune to sonic-type damages
 ENT.CustomModel = ENT.Model
 ENT.Model = { "models/tamill/ab_rem/tb_rem.mdl" }
@@ -102,43 +103,32 @@ function ENT:SetRealTarget(argent)
 		if not VJ_HasValue(self.VJ_AddCertainEntityAsEnemy,argent) then
 		  self.VJ_AddCertainEntityAsEnemy[#self.VJ_AddCertainEntityAsEnemy+1] = argent
 		end
-		--self.TakingCoverT = CurTime() + 2
+		self:VJ_DoSetEnemy(argent,true)
 		if argent:IsNPC() then
 			self:AddEntityRelationship(argent,D_HT,99)
 			argent:AddEntityRelationship(self,D_HT,99)
-			argent.GodMode = false	
-			self:VJ_DoSetEnemy(argent,true)
+			argent.GodMode = false		
 		end
 		self.Target = argent
-		if argent:Health() > 1000 then
-			argent:SetHealth(800)
-		end	
 	end
 end
 
 function ENT:RespawnAnimeCharacter()
 	local master = self.Master
-	local newself = ents.Create(self.EntName)
-	if (!IsValid(self)) then return end 
-	if (!IsValid(newself) or !IsValid(master)) then return end 
-	if self.SpawnPos != nil then newself:SetPos(self.SpawnPos) end
-	newself:Spawn()  
-	newself:SetCreator(master)
-	newself.FollowingPlayer = self.FollowingPlayer
-	newself.FollowingPlayerName = master
-	newself.RunningAfter_FollowPlayer = self.RunningAfter_FollowPlayer
-	newself:SetRealTarget(self.Target)
+	local selfEntName = self.AssetName
+	local selfPos = self.SpawnPos
+	local selfEmy = self.Target
+	timer.Simple(5,function() 
+		local newself = ents.Create(selfEntName)
+		if (!IsValid(newself) or !IsValid(master)) then return end 
+		if selfPos != nil then newself:SetPos(selfPos) end
+		newself:Spawn()  
+		newself:SetCreator(master)
+		newself:SetRealTarget(selfEmy)
+	end)
 end
 
-function ENT:OnReloadWeaponCheck()
-	if self.IsReloadingWeapon == false && self.AllowWeaponReloading == true && self:VJ_HasActiveWeapon() == true and self.RunningAfter_FollowPlayer == true and IsValid(self:GetEnemy()) and self:GetEnemy() != nil then
-		if self.Weapon_ShotsSinceLastReload >= self.Weapon_StartingAmmoAmount && ((self.VJ_IsBeingControlled == false) or (self.VJ_IsBeingControlled == true && self.VJ_TheController:KeyDown(IN_RELOAD))) then
-			if self.Weapon_UnlimitedAmmo == true then self:GetActiveWeapon():SetClip1(99999) end
-			self.Weapon_ShotsSinceLastReload = 0
-			self:CustomOnWeaponReload()
-		end
-	end
-end
+
 
 function ENT:CreateBloodOn(tgt)
 	local vPoint = tgt:GetPos() + tgt:GetUp() * 50
@@ -159,7 +149,7 @@ function ENT:InitTakeDamageHook()
 				dmginfo:SetDamageForce(self:GetForward()* 2000)
 			end
 			if ent == self then
-				dmginfo:ScaleDamage(0)
+				dmginfo:ScaleDamage(0.1)
 			end
 
 			if IsValid(HookAttacker) then
@@ -256,6 +246,14 @@ ENT.PlayerFriendly = true
 ENT.BecomeEnemyToPlayer = false
 
 
+function ENT:OnReloadWeaponCheck()
+	if self.IsReloadingWeapon == false && self.AllowWeaponReloading == true && self:VJ_HasActiveWeapon() == true then
+		if self.Weapon_ShotsSinceLastReload >= self.Weapon_StartingAmmoAmount && self.VJ_IsBeingControlled == false then
+			self.Weapon_ShotsSinceLastReload = 0
+			self:GetActiveWeapon():NPC_ReloadWeapon()
+		end
+	end
+end
 
 function ENT:OnUpdate()
 	
@@ -269,7 +267,7 @@ function ENT:OnUpdate()
 			if not self.shouldDieCheck == true and not TargetLock:IsPlayer()  then
 				self.shouldDieCheck = true
 				local abc = TargetLock
-				timer.Simple(20, function()
+				timer.Simple(30, function()
 					if IsValid(abc) and IsValid(self) then
 						if self:GetEnemy() == abc then
 							self:CreateBloodOn(abc)
@@ -470,7 +468,7 @@ end
 
 function ENT:TipAddonError()
 	if IsValid(self:GetCreator()) then
-		self:GetCreator():PrintMessage(HUD_PRINTTALK, self.ChineseName.."("..self:GetName()..") 在 Steam Workshop 上已经被移除(removed by author)，请访问度盘下载(Please visit here to download it): https://pan.baidu.com/s/1nv5SibJ")
+		--self:GetCreator():PrintMessage(HUD_PRINTTALK, self.ChineseName.."("..self:GetName()..") 在 Steam Workshop 上已经被移除(removed by author)，请访问度盘下载(Please visit here to download it): https://pan.baidu.com/s/1nv5SibJ")
 	end
 
 end
