@@ -247,12 +247,7 @@ ENT.BecomeEnemyToPlayer = false
 
 
 function ENT:OnReloadWeaponCheck()
-	if self.IsReloadingWeapon == false && self.AllowWeaponReloading == true && self:VJ_HasActiveWeapon() == true then
-		if self.Weapon_ShotsSinceLastReload >= self.Weapon_StartingAmmoAmount && self.VJ_IsBeingControlled == false then
-			self.Weapon_ShotsSinceLastReload = 0
-			self:GetActiveWeapon():NPC_ReloadWeapon()
-		end
-	end
+
 end
 
 function ENT:OnUpdate()
